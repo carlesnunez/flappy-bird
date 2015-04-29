@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/Gruntfile.js" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/game/prefabs/bird.js" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/game/prefabs/ground.js" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/game/states/boot.js" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/game/states/menu.js" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/game/states/play.js" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/game/states/preload.js" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/package.json" charset="UTF-8" />
+  </component>
+</project>
