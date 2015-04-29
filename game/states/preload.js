@@ -11,12 +11,13 @@ Preload.prototype = {
     this.asset.anchor.setTo(0.5, 0.5);
     this.load.setPreloadSprite(this.asset);
 
-    this.load.image('background','assets/background.png');
-    this.load.image('ground','assets/ground.png');
-    this.load.image('title','assets/title.png');
-    this.load.image('startButton','assets/start-button.png');
+    this.load.image('background', 'assets/background.png');
+    this.load.image('ground', 'assets/ground.png');
+    this.load.image('title', 'assets/title.png');
+    this.load.image('startButton', 'assets/start-button.png');
 
     this.load.spritesheet('bird', 'assets/pajaro.png', 34, 24, 3);
+    this.load.spritesheet('pipe', 'assets/pipes.png', 54, 320, 2);
   },
   create: function () {
     this.asset.cropEnabled = false;
