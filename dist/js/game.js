@@ -33,6 +33,15 @@ var Bird = function(game, x, y, frame) {
   this.game.physics.arcade.enableBody(this);
   this.body.allowGravity = false;
   this.alive = false;
+
+  this.flap = function() {
+    if(!this.body){
+      this.body = new Phaser.Physics.Arcade.Body(this)
+    }
+    this.flapSound.play();
+    this.body.velocity.y = -350;
+    game.add.tween(this).to({angle: -40}, 100).start();
+  };
 };
 
 Bird.prototype = Object.create(Phaser.Sprite.prototype);
@@ -46,12 +55,7 @@ Bird.prototype.update = function() {
   }
 };
 
-Bird.prototype.flap = function() {
-  this.flapSound.play();
-  this.body.velocity.y = -350;
-  this.game.add.tween(this).to({angle: -40}, 100).start();
 
-};
 
 module.exports = Bird;
 
@@ -168,13 +172,69 @@ PipeGroup.prototype.update = function(){
 module.exports = PipeGroup;
 
 },{"./pipe":4}],6:[function(require,module,exports){
-var Scoreboard = function(game) {
+var Scoreboard = function(game, parent) {
   var gameover;
 
   Phaser.Group.call(this, game);
   gameover = this.create(this.game.width / 2, 100, 'gameover');
   gameover.anchor.setTo(0.5, 0.5);
+  this.show = function(score) {
+    var medal, bestScore;
 
+    // Step 1
+    this.scoreText.setText(score.toString());
+
+    if(!!localStorage) {
+      // Step 2
+      bestScore = localStorage.getItem('bestScore');
+
+      // Step 3
+      if(!bestScore || bestScore < score) {
+        bestScore = score;
+        localStorage.setItem('bestScore', bestScore);
+      }
+    } else {
+      // Fallback. LocalStorage isn't available
+      bestScore = 'N/A';
+    }
+
+    // Step 4
+    this.bestScoreText.setText(bestScore.toString());
+
+    // Step 5 & 6
+    if(score >= 10 && score < 20)
+    {
+      medal = this.game.add.sprite(-65 , 7, 'medals', 1);
+      medal.anchor.setTo(0.5, 0.5);
+      this.scoreboard.addChild(medal);
+    } else if(score >= 20) {
+      medal = this.game.add.sprite(-65 , 7, 'medals', 0);
+      medal.anchor.setTo(0.5, 0.5);
+      this.scoreboard.addChild(medal);
+    }
+
+    // Step 7
+    if (medal) {
+
+      var emitter = this.game.add.emitter(medal.x, medal.y, 400);
+      this.scoreboard.addChild(emitter);
+      emitter.width = medal.width;
+      emitter.height = medal.height;
+
+      emitter.makeParticles('particle');
+
+      emitter.setRotation(-100, 100);
+      emitter.setXSpeed(0,0);
+      emitter.setYSpeed(0,0);
+      emitter.minParticleScale = 0.25;
+      emitter.maxParticleScale = 0.5;
+      emitter.setAll('body.allowGravity', false);
+
+      emitter.start(false, 1000, 1000);
+
+    }
+    this.game.add.tween(this).to({y: 0}, 1000, Phaser.Easing.Bounce.Out, true);
+  };
   this.scoreboard = this.create(this.game.width / 2, 200, 'scoreboard');
   this.scoreboard.anchor.setTo(0.5, 0.5);
 
@@ -185,7 +245,7 @@ var Scoreboard = function(game) {
   this.add(this.bestScoreText);
 
   // add our start button with a callback
-  this.startButton = this.game.add.button(this.game.width/2, 300, 'startButton', this.startClick, this);
+  this.startButton = this.game.add.button(this.game.width/2, 300, 'startButton', parent.startClick, this);
   this.startButton.anchor.setTo(0.5,0.5);
 
   this.add(this.startButton);
@@ -195,68 +255,7 @@ var Scoreboard = function(game) {
   };
 
 Scoreboard.prototype.preload = function preload(){
-  this.load.image('scoreboard', 'assets/scoreboard.png');
-  this.load.image('gameover', 'assets/gameover.png');
-  this.load.spritesheet('medals', 'assets/medals.png', 44, 46, 2);
-  this.load.image('particle', 'assets/particle.png');
-};
 
-Scoreboard.prototype.show = function(score) {
-  var medal, bestScore;
-
-  // Step 1
-  this.scoreText.setText(score.toString());
-
-  if(!!localStorage) {
-    // Step 2
-    bestScore = localStorage.getItem('bestScore');
-
-    // Step 3
-    if(!bestScore || bestScore < score) {
-      bestScore = score;
-      localStorage.setItem('bestScore', bestScore);
-    }
-  } else {
-    // Fallback. LocalStorage isn't available
-    bestScore = 'N/A';
-  }
-
-  // Step 4
-  this.bestText.setText(bestScore.toString());
-
-  // Step 5 & 6
-  if(score >= 10 && score < 20)
-  {
-    medal = this.game.add.sprite(-65 , 7, 'medals', 1);
-    medal.anchor.setTo(0.5, 0.5);
-    this.scoreboard.addChild(medal);
-  } else if(score >= 20) {
-    medal = this.game.add.sprite(-65 , 7, 'medals', 0);
-    medal.anchor.setTo(0.5, 0.5);
-    this.scoreboard.addChild(medal);
-  }
-
-  // Step 7
-  if (medal) {
-
-    var emitter = this.game.add.emitter(medal.x, medal.y, 400);
-    this.scoreboard.addChild(emitter);
-    emitter.width = medal.width;
-    emitter.height = medal.height;
-
-    emitter.makeParticles('particle');
-
-    emitter.setRotation(-100, 100);
-    emitter.setXSpeed(0,0);
-    emitter.setYSpeed(0,0);
-    emitter.minParticleScale = 0.25;
-    emitter.maxParticleScale = 0.5;
-    emitter.setAll('body.allowGravity', false);
-
-    emitter.start(false, 1000, 1000);
-
-  }
-  this.game.add.tween(this).to({y: 0}, 1000, Phaser.Easing.Bounce.Out, true);
 };
 
 Scoreboard.prototype = Object.create(Phaser.Group.prototype);
@@ -366,9 +365,23 @@ var PipeGroup = require('../prefabs/pipeGroup');
 var Scoreboard = require('../prefabs/scoreboard');
 'use strict';
 function Play() {
+
 }
 Play.prototype = {
-  create: function () {
+
+  init: function () {
+    this.startGame = function () {
+      this.game.physics.arcade.enableBody(this.bird);
+      this.bird.body.allowGravity = true;
+      this.bird.alive = true;
+      this.scoreText.visible = true;
+
+      // add a timer
+      this.pipeGenerator = this.game.time.events.loop(Phaser.Timer.SECOND * 1.25, this.generatePipes, this);
+      this.pipeGenerator.timer.start();
+
+      this.instructionGroup.destroy();
+    };
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
     this.game.physics.arcade.gravity.y = 1200;
 
@@ -405,18 +418,6 @@ Play.prototype = {
     this.scoreText.visible = false;
     this.scoreSound = this.game.add.audio('score');
 
-
-  },
-  startGame: function () {
-    this.bird.body.allowGravity = true;
-    this.bird.alive = true;
-    this.scoreText.visible = true;
-
-    // add a timer
-    this.pipeGenerator = this.game.time.events.loop(Phaser.Timer.SECOND * 1.25, this.generatePipes, this);
-    this.pipeGenerator.timer.start();
-
-    this.instructionGroup.destroy();
   },
   generatePipes: function () {
     var pipeY = this.game.rnd.integerInRange(-100, 100);
@@ -448,13 +449,16 @@ Play.prototype = {
       this.scoreSound.play();
     }
   },
-
+startClick : function(){
+  this.scoreboard.destroy();
+  this.game.state.start('play');
+},
   deathHandler: function () {
     this.bird.alive = false;
     this.pipes.callAll('stop');
     this.pipeGenerator.timer.stop();
     this.ground.stopScroll();
-    this.scoreboard = new Scoreboard(this.game);
+    this.scoreboard = new Scoreboard(this.game, this);
     this.game.add.existing(this.scoreboard);
     this.scoreboard.show(this.score);
     this.shutdown();
@@ -489,6 +493,10 @@ Preload.prototype = {
     this.load.image('startButton', 'assets/start-button.png');
     this.load.image('instructions', 'assets/instructions.png');
     this.load.image('getReady', 'assets/get-ready.png');
+    this.load.image('scoreboard', 'assets/scoreboard.png');
+    this.load.image('gameover', 'assets/gameover.png');
+    this.load.spritesheet('medals', 'assets/medals.png', 44, 46, 2);
+    this.load.image('particle', 'assets/particle.png');
 
     this.load.spritesheet('bird', 'assets/pajaro.png', 34, 24, 3);
     this.load.spritesheet('pipe', 'assets/pipes.png', 54, 320, 2);

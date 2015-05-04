@@ -6,6 +6,7 @@
     <file url="file://$PROJECT_DIR$/game/prefabs/ground.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/game/prefabs/pipe.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/game/prefabs/pipeGroup.js" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/game/prefabs/scoreboard.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/game/states/boot.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/game/states/menu.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/game/states/play.js" charset="UTF-8" />

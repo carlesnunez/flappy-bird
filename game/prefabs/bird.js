@@ -15,6 +15,15 @@ var Bird = function(game, x, y, frame) {
   this.game.physics.arcade.enableBody(this);
   this.body.allowGravity = false;
   this.alive = false;
+
+  this.flap = function() {
+    if(!this.body){
+      this.body = new Phaser.Physics.Arcade.Body(this)
+    }
+    this.flapSound.play();
+    this.body.velocity.y = -350;
+    game.add.tween(this).to({angle: -40}, 100).start();
+  };
 };
 
 Bird.prototype = Object.create(Phaser.Sprite.prototype);
@@ -28,11 +37,6 @@ Bird.prototype.update = function() {
   }
 };
 
-Bird.prototype.flap = function() {
-  this.flapSound.play();
-  this.body.velocity.y = -350;
-  this.game.add.tween(this).to({angle: -40}, 100).start();
 
-};
 
 module.exports = Bird;

@@ -4,9 +4,23 @@ var PipeGroup = require('../prefabs/pipeGroup');
 var Scoreboard = require('../prefabs/scoreboard');
 'use strict';
 function Play() {
+
 }
 Play.prototype = {
-  create: function () {
+
+  init: function () {
+    this.startGame = function () {
+      this.game.physics.arcade.enableBody(this.bird);
+      this.bird.body.allowGravity = true;
+      this.bird.alive = true;
+      this.scoreText.visible = true;
+
+      // add a timer
+      this.pipeGenerator = this.game.time.events.loop(Phaser.Timer.SECOND * 1.25, this.generatePipes, this);
+      this.pipeGenerator.timer.start();
+
+      this.instructionGroup.destroy();
+    };
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
     this.game.physics.arcade.gravity.y = 1200;
 
@@ -43,18 +57,6 @@ Play.prototype = {
     this.scoreText.visible = false;
     this.scoreSound = this.game.add.audio('score');
 
-
-  },
-  startGame: function () {
-    this.bird.body.allowGravity = true;
-    this.bird.alive = true;
-    this.scoreText.visible = true;
-
-    // add a timer
-    this.pipeGenerator = this.game.time.events.loop(Phaser.Timer.SECOND * 1.25, this.generatePipes, this);
-    this.pipeGenerator.timer.start();
-
-    this.instructionGroup.destroy();
   },
   generatePipes: function () {
     var pipeY = this.game.rnd.integerInRange(-100, 100);
@@ -86,13 +88,16 @@ Play.prototype = {
       this.scoreSound.play();
     }
   },
-
+startClick : function(){
+  this.scoreboard.destroy();
+  this.game.state.start('play');
+},
   deathHandler: function () {
     this.bird.alive = false;
     this.pipes.callAll('stop');
     this.pipeGenerator.timer.stop();
     this.ground.stopScroll();
-    this.scoreboard = new Scoreboard(this.game);
+    this.scoreboard = new Scoreboard(this.game, this);
     this.game.add.existing(this.scoreboard);
     this.scoreboard.show(this.score);
     this.shutdown();
