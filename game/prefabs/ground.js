@@ -1,9 +1,11 @@
 
 
 var Ground = function(game, x, y, width, height) {
-  Phaser.Sprite.call(this, game, x, y, 'ground');
+  Phaser.TileSprite.call(this, game, x, y, width, height, 'ground');
+
+  this.physicsType = Phaser.SPRITE;
   // start scrolling our ground
-  //this.autoScroll(-200,0);
+  this.autoScroll(-200,0);
 
   // enable physics on the ground sprite
   // this is needed for collision detection
@@ -15,7 +17,7 @@ var Ground = function(game, x, y, width, height) {
   this.body.allowGravity = false;
 };
 
-Ground.prototype = Object.create(Phaser.Sprite.prototype);
+Ground.prototype = Object.create(Phaser.TileSprite.prototype);
 Ground.prototype.constructor = Ground;
 
 Ground.prototype.update = function () {
